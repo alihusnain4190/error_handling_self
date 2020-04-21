@@ -63,3 +63,4 @@ VALUES
 (2.5,1),
 (1.5,2);
 
+SELECT * FROM restaurants;

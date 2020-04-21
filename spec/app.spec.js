@@ -3,7 +3,7 @@ const { expect } = require("chai");
 const app = require("../app");
 describe("app", () => {
   describe("/api", () => {
-    describe("/restuarents", () => {
+    describe("/areas", () => {
       describe("GET", () => {
         it("status 200 with array of objects", () => {
           request(app)
@@ -31,21 +31,61 @@ describe("app", () => {
               });
             });
         });
-      });
-      describe("Post", () => {
-        it("status 201 responce with keys of area object", () => {
+        it("status 200, responce with array of restaurants with area id", () => {
           return request(app)
-            .post("/api/areas")
-            .send({ areas_name: "liverpool" })
-            .expect(201)
+            .get("/api/areas/1/restaurants")
+            .expect(200)
             .then((res) => {
-              expect(res.body.area).to.have.all.keys([
-                "areas_id",
-                "areas_name",
-              ]);
+              expect(res.body).to.have.a("object");
             });
         });
-    
+        it("status 200 response object of restaurants by cuisine", () => {
+          return request(app)
+            .get("/api/areas/2/restaurants?cuisine=karahi")
+            .expect(200)
+            .then((res) => {
+              expect(res.body).to.have.a("object");
+              //   expect(res.body).to.haveOwnProperty([
+              //     "area_id",
+              //     "restaurant_id",
+              //     "total_restaurants",
+              //   ]);
+            });
+        });
+        // it("status 404 response object of restaurants by cuisine", () => {
+        //   return request(app)
+        //     .get("/api/areas/10/restaurants?cuisine=karahi")
+        //     .expect(404)
+        //     .then((res) => {
+        //       expect(res.body).to.have.a("object");
+        //     });
+        // });
+      });
+
+      describe("POST", () => {
+        it.only("status 201 add a restaurant", () => {
+          return request(app)
+            .post("/api/areas/3/restaurants")
+            .send({
+              restaurant: {
+                restaurants_name: "Delhi 2 Go",
+                restaurants_cusine: "Indian",
+                restaurants_website: "https://www.dheli-2-g-.com",
+                areas_id: 3,
+              },
+            })
+            .expect(201)
+            .then((res) => {
+              expect(res.body.restaurant).to.deep.equal({
+                restaurant: {
+                  restaurants_name: "Delhi 2 Go",
+                  restaurants_cusine: "Indian",
+                  restaurants_website: "https://www.dheli-2-g-.com",
+                  areas_id: 3,
+                },
+              });
+            });
+        });
       });
     });
   });
